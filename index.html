@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- S : FAVICON -->
+    <link rel="shortcut icon" href="img/flower.ico">
+    <link rel="apple-touch-icon-precomposed" href="img/flower.ico">
+    <link rel="icon" sizes="16x16" href="img/flower.ico">
+    <link rel="icon" sizes="32x32" href="img/flower.ico">
+    <!--// E : FAVICON -->
+
+    <!-- S : FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Didact+Gothic&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+    <!--// E : FONT-->
+
+    <!-- S : CSS -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/index.css">
+    <!--//E : CSS-->
+
+    <!-- S : JS -->
+    <script src="js/jquery.min_1.12.4.js"></script>
+    <script src="js/jquery.scrollTo.min.js"></script>
+    <script src="js/TweenMax.min.js"></script>
+    <!-- // E : JS -->
+
+    <!--[if It IE9]>
+        <script src="assets/js/html5shiv.min.js></script>
+        <script type="text/javascript">
+            alert("현재 브라우저는 지원하지 않습니다. 크롬 브라우저를 추천합니다.!");
+        </script>
+    <![endif]-->
+</head>
+<body>
+    <div id="wrap">
+        <header id="content1">
+            <div class="bg"></div>
+
+            <div class="main-tag">
+                <p class="m1">I&nbsp;&nbsp;</p>
+                <p class="m2">W</p>
+                <p class="m3">O</p>
+                <p class="m4">N</p>
+                <p class="m5">T&nbsp;&nbsp;</p>
+                <p class="m6">W</p>
+                <p class="m7">O</p>
+                <p class="m8">R</p>
+                <p class="m9">K</p>
+                <p class="m10">!</p>
+            </div>
+
+            <audio id="music" preload="true">
+                <source src="./audio/she likes spring.mp3" preload="none">
+            </audio>
+            
+            <div class="audioplayer">
+                <button type="button" id="pButton" class="play">
+                    <p class="ir_su">노래재생 노래정지 버튼</p>
+                </button>
+                <div id="timeline">    
+                    <div id="playhead"></div>
+                </div>
+            </div>
+        </header>
+    </div>
+    <script>
+
+    /*audio player*/
+    //var music = document.getElementById('music'); 
+    var duration = music.duration;
+    var pButton = document.getElementById('pButton'); 
+    var playhead = document.getElementById('playhead'); 
+    var timeline = document.getElementById('timeline'); 
+
+    var timelineWidth = timeline.offsetWidth - playhead.offsetWidth;
+    pButton.addEventListener("click", play);
+    music.addEventListener("timeupdate", timeUpdate, false);
+    timeline.addEventListener("click", function(event) {
+        moveplayhead(event);
+        music.currentTime = duration * clickPercent(event);
+    }, false);
+
+    function clickPercent(event) {
+        return (event.clientX - getPosition(timeline)) / timelineWidth;
+    }
+    playhead.addEventListener('mousedown', mouseDown, false);
+    window.addEventListener('mouseup', mouseUp, false);
+
+    var onplayhead = false;
+    function mouseDown() {
+        onplayhead = true;
+        window.addEventListener('mousemove', moveplayhead, true);
+        music.removeEventListener('timeupdate', timeUpdate, false);
+    }
+
+    function mouseUp(event) {
+        if (onplayhead == true) {
+            moveplayhead(event);
+            window.removeEventListener('mousemove', moveplayhead, true);
+            // change current time
+            music.currentTime = duration * clickPercent(event);
+            music.addEventListener('timeupdate', timeUpdate, false);
+        }
+        onplayhead = false;
+    }
+
+    function moveplayhead(event) {
+        var newMargLeft = event.clientX - getPosition(timeline);
+
+        if (newMargLeft >= 0 && newMargLeft <= timelineWidth) {
+            playhead.style.marginLeft = newMargLeft + "px";
+        }
+        if (newMargLeft < 0) {
+            playhead.style.marginLeft = "0px";
+        }
+        if (newMargLeft > timelineWidth) {
+            playhead.style.marginLeft = timelineWidth + "px";
+        }
+    }
+
+    function timeUpdate() {
+        var playPercent = timelineWidth * (music.currentTime / duration);
+        playhead.style.marginLeft = playPercent + "px";
+        if (music.currentTime == duration) {
+            pButton.className = "";
+            pButton.className = "play";
+        }
+    }
+
+    function play() {
+        if (music.paused) {
+            music.play();
+            pButton.className = "";
+            pButton.className = "pause";
+        } else { // 
+            music.pause();
+            pButton.className = "";
+            pButton.className = "play";
+        }
+    }
+
+    music.addEventListener("canplaythrough", function() {
+        duration = music.duration;
+    }, false);
+
+    function getPosition(el) {
+        return el.getBoundingClientRect().left;
+    }
+    </script>
+</body>
+</html>
